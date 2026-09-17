@@ -22,8 +22,9 @@ secret scanning.
 
 1. Create this repo on GitHub, e.g. `github.com/<your-username>/vulnerable-python-demo`.
 2. Push all these files.
-3. In `.github/workflows/main.yml`, replace `<your-github-username>` with
-   your actual GitHub username (same one used for the platform repo).
+3. The workflow references the shared `kprasadpn/github-platform-workflows`
+   repository. If you use a fork of that repository, update the composite
+   action references in `.github/workflows/main.yml` to point to your fork.
 4. Enable, under `Settings -> Security -> Code security and analysis`:
    - Dependency graph
    - Dependabot alerts
@@ -31,7 +32,10 @@ secret scanning.
    - Secret scanning (if available on your plan/repo visibility)
    - Code scanning (this gets populated by the CodeQL workflow itself)
 5. Push a commit or open a PR — the pipeline in `main.yml` will call out to
-   `github-platform-workflows` for every stage.
+   `github-platform-workflows` for each CI stage. Build, unit tests, and CodeQL
+   now run in one job so CodeQL initialization and analysis share the same
+   checkout and build context; dependency review and secret scanning remain
+   separate checks.
 
 ## Expected results after first run
 
@@ -42,5 +46,6 @@ secret scanning.
 - **Security -> Secret scanning alerts**: the fake AWS key pair in `app.py`.
 - **Security -> Dependabot alerts**: CVEs for the pinned old package versions.
 - **Pull requests**: opening a PR triggers `dependency-review`, which will
-  flag/fail on the vulnerable dependencies depending on the severity
-  threshold set.
+  report the vulnerable dependencies and fail on newly introduced critical
+  severity findings. High-severity compatibility findings remain visible
+  without blocking this intentionally vulnerable demo.
