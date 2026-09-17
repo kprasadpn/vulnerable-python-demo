@@ -27,6 +27,8 @@ jobs:
           python-version: "3.11"
 
       - uses: kprasadpn/github-platform-workflows/.github/actions/ci-unit-test@main
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         with:
           python-version: "3.11"
 
