@@ -11,7 +11,7 @@ class AppTestCase(unittest.TestCase):
         self.assertIn(response.status_code, [200, 500])
 
     def test_calc_simple_expression(self):
-        response = self.client.get("/calc?expr=1+1")
+        response = self.client.get("/calc?expr=1%2B1")
         self.assertEqual(response.status_code, 200)
 
 
