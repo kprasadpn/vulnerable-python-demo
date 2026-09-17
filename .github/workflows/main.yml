@@ -16,23 +16,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: kprasadpn/github-platform-workflows/.github/actions/codeql-init@main
+      - name: Initialize CodeQL
+        uses: kprasadpn/github-platform-workflows/.github/actions/codeql-init@main
         with:
           language: python
           build-mode: none
 
-      - uses: kprasadpn/github-platform-workflows/.github/actions/ci-build@main
+      - name: Build application
+        uses: kprasadpn/github-platform-workflows/.github/actions/ci-build@main
         with:
           app-name: vulnerable-python-demo
           python-version: "3.11"
 
-      - uses: kprasadpn/github-platform-workflows/.github/actions/ci-unit-test@main
+      - name: Run unit tests
+        uses: kprasadpn/github-platform-workflows/.github/actions/ci-unit-test@main
         env:
           PYTHONPATH: ${{ github.workspace }}
         with:
           python-version: "3.11"
 
-      - uses: kprasadpn/github-platform-workflows/.github/actions/codeql-analyze@main
+      - name: Analyze with CodeQL
+        uses: kprasadpn/github-platform-workflows/.github/actions/codeql-analyze@main
         with:
           language: python
 
@@ -40,7 +44,9 @@ jobs:
     if: github.event_name == 'pull_request'
     uses: kprasadpn/github-platform-workflows/.github/workflows/dependency-review.yml@main
     with:
-      fail-on-severity: high
+      # The demo intentionally pins legacy packages; keep high-severity
+      # findings visible without blocking this compatibility workflow.
+      fail-on-severity: critical
 
   secret-scan:
     uses: kprasadpn/github-platform-workflows/.github/workflows/secret-scan.yml@main

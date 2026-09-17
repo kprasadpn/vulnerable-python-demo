@@ -46,5 +46,6 @@ secret scanning.
 - **Security -> Secret scanning alerts**: the fake AWS key pair in `app.py`.
 - **Security -> Dependabot alerts**: CVEs for the pinned old package versions.
 - **Pull requests**: opening a PR triggers `dependency-review`, which will
-  flag/fail on the vulnerable dependencies depending on the severity
-  threshold set.
+  report the vulnerable dependencies and fail on newly introduced critical
+  severity findings. High-severity compatibility findings remain visible
+  without blocking this intentionally vulnerable demo.
