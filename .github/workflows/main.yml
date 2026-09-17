@@ -7,22 +7,32 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    uses: kprasadpn/github-platform-workflows/.github/workflows/ci-build.yml@main
-    with:
-      app-name: vulnerable-python-demo
-      python-version: "3.11"
+  ci:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
 
-  unit-test:
-    uses: kprasadpn/github-platform-workflows/.github/workflows/ci-unit-test.yml@main
-    with:
-      python-version: "3.11"
+      - uses: kprasadpn/github-platform-workflows/.github/actions/codeql-init@main
+        with:
+          language: python
+          build-mode: none
 
-  ghas-analyze:
-    uses: kprasadpn/github-platform-workflows/.github/workflows/ghas-analyze.yml@main
-    with:
-      language: python
-      build-mode: none
+      - uses: kprasadpn/github-platform-workflows/.github/actions/ci-build@main
+        with:
+          app-name: vulnerable-python-demo
+          python-version: "3.11"
+
+      - uses: kprasadpn/github-platform-workflows/.github/actions/ci-unit-test@main
+        with:
+          python-version: "3.11"
+
+      - uses: kprasadpn/github-platform-workflows/.github/actions/codeql-analyze@main
+        with:
+          language: python
 
   dependency-review:
     if: github.event_name == 'pull_request'
